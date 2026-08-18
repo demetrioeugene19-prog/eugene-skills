@@ -1,6 +1,6 @@
 # Eugene skills
 
-My Claude Code skill library. 49 skills plus 1 slash command, moved between machines with this repo.
+My Claude Code skill library. 50 skills plus 1 slash command, moved between machines with this repo.
 
 A skill is a folder of instructions Claude loads when a task matches it. Nothing to run, nothing to install beyond putting the folders in the right place.
 
@@ -37,7 +37,7 @@ cp -R skills/* "~/Documents/EUGENE SYSTEM/.claude/skills/"
 cp -R commands/* "~/Documents/EUGENE SYSTEM/.claude/commands/"
 ```
 
-**3. Restart Claude Code**, then ask it to list available skills. All 49 should appear.
+**3. Restart Claude Code**, then ask it to list available skills. All 50 should appear.
 
 ---
 
