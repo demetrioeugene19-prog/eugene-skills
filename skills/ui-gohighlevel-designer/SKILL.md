@@ -58,6 +58,16 @@ Map the user's reference to one of these profiles (or blend two if needed):
 2. **Add `@media (min-width: 768px)`** for tablet
 3. **Add `@media (min-width: 1024px)`** for desktop
 
+### Tablet view is now a first-class GHL preview (builder update, Aug 2026)
+
+The GHL page builder now previews in THREE modes: Desktop, **Tablet**, and Mobile. Clients and editors WILL look at the tablet preview, so the in-between range can no longer be an accident.
+
+- **Never jump straight from a 1-column mobile layout to a 3-column desktop layout at ~900px+.** The tablet preview (roughly 768–1024, iPads render at 768 / 810 / 820 / 834) must show a deliberate state.
+- Rule of thumb for card grids: 1 column base → **2 columns at `min-width: 640px`** → 3+ columns at `min-width: 1024px` (or ~820px if the 3-up still has ≥230px per card and clamp() type). With 3-item grids where 2-col leaves an orphan, either allow 3-col from ~820px or span the third card full-width (`grid-column: 1 / -1`).
+- Nav bars: the tablet width must show either the full desktop nav or the mobile pattern — never a half-collapsed hybrid. Test which side of the breakpoint 768–834 falls on.
+- Stat bands / step rows: 2x2 at tablet usually beats a cramped 1x4.
+- Before delivering, mentally QA (or screenshot) at **390px, 810px, and 1440px** — the three widths the GHL builder previews now map to.
+
 ### Mobile-Specific Rules
 - Font sizes: headlines `clamp(1.8rem, 6vw, 3.5rem)`, body `clamp(0.9rem, 3.5vw, 1.1rem)`
 - Padding: `padding: 2rem 1.2rem` on mobile, `padding: 4rem 2rem` on desktop
@@ -195,6 +205,7 @@ Before delivering code, mentally verify:
 - [ ] Scoped unique wrapper ID present
 - [ ] All CSS inside `<style>` tag
 - [ ] Mobile styles written FIRST (base), tablet/desktop in `@media min-width`
+- [ ] Tablet range (768–1024) shows a deliberate layout — checked at ~810px, since GHL's builder now previews Desktop / Tablet / Mobile
 - [ ] Google Font `@import` at top of `<style>`
 - [ ] No `<html>/<head>/<body>` tags
 - [ ] No external JS libraries
