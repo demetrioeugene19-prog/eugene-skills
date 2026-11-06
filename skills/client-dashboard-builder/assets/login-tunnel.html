@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email Dashboard Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0f0e;--text:#ecebe8;--muted:#a3aca9;--faint:#848e8b;--rose:#d6938a;--mint:#8fb8a6;--line:#ffffff14}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+.vig{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 45%,#0b0f0e 100%)}
+.flash{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 50%,#fff3ee 0%,#d6938a 35%,#0b0f0e 75%);opacity:0;transition:opacity .5s}
+.flash.on{opacity:1}
+.brand{position:fixed;top:34px;left:44px;z-index:3;display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(-8px);transition:opacity .8s .3s,transform .8s .3s}
+.brand.on{opacity:1;transform:none}
+.brand .logo{width:38px;height:38px;border-radius:11px;background:var(--rose);display:grid;place-items:center;color:#1b1311}
+.brand b{display:block;font-size:15px;letter-spacing:.02em}.brand span{font-size:10px;letter-spacing:.26em;color:var(--rose);font-weight:700}
+svg.ic{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tag{position:fixed;left:44px;top:40px;z-index:3;max-width:420px;opacity:0;transform:translateY(-10px);transition:opacity .9s .5s,transform .9s .5s}
+.tag.on{opacity:1;transform:none}
+.tag h1{margin:0;font-size:clamp(28px,3.4vw,46px);font-weight:600;letter-spacing:-.03em;line-height:1.05}
+.tag h1 em{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:500;color:var(--rose)}
+.tag p{margin:12px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55}
+/* the login card on the right: same card as the sales dashboard login */
+.card{position:fixed;z-index:4;top:50%;right:clamp(20px,7vw,110px);width:min(400px,calc(100vw - 40px));padding:34px 30px 22px;border-radius:20px;display:flex;flex-direction:column;gap:14px;
+  background:linear-gradient(#111614e6,#0e1312f2) padding-box,linear-gradient(150deg,#d6938a99,#ffffff14 40%,#ffffff0a 60%,#8fb8a666) border-box;border:1px solid transparent;
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 30px 80px #000a,0 0 120px #ffd6b414,inset 0 1px 0 #ffffff12;
+  transform:translate(40px,-50%) scale(.97);opacity:0;pointer-events:none;transition:transform 1s cubic-bezier(.33,0,.15,1),opacity .8s}
+.card.on{transform:translate(0,-50%);opacity:1;pointer-events:auto}
+.card.out{transform:translate(0,-50%) scale(.96);opacity:0;transition:transform .5s,opacity .4s}
+.card .li{opacity:0}
+.card.on .li{animation:lg-up .8s cubic-bezier(.33,0,.15,1) both}
+.card .li:nth-child(1){animation-delay:.2s}.card .li:nth-child(2){animation-delay:.27s}.card .li:nth-child(3){animation-delay:.34s}.card .li:nth-child(4){animation-delay:.41s}.card .li:nth-child(5){animation-delay:.48s}.card .li:nth-child(6){animation-delay:.55s}.card .li:nth-child(8){animation-delay:.63s}
+@keyframes lg-up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.login-logo{display:block;width:180px;max-width:70%;height:auto;margin:0 auto;filter:drop-shadow(0 6px 24px #d6938a33)}
+.login-brand{display:flex;align-items:center;justify-content:center;gap:10px;font-size:11px;letter-spacing:2.4px;color:var(--rose);font-weight:600}
+.login-brand span{height:1px;width:28px;background:linear-gradient(90deg,transparent,#d6938a)}.login-brand span:last-child{transform:scaleX(-1)}
+.card h2{margin:6px 0 0;font-size:24px;font-weight:600;letter-spacing:-.5px;text-align:center}
+.card p{margin:0 0 4px;color:var(--muted);font-size:14px;line-height:1.5;text-align:center}
+.login-field{position:relative;display:flex;align-items:center}
+.login-field>svg{position:absolute;left:13px;width:17px;height:17px;fill:none;stroke:#848e8b;stroke-width:1.8;stroke-linecap:round;pointer-events:none;transition:stroke .2s}
+.login-field input{width:100%;padding:13px 44px 13px 40px;border-radius:11px;border:1px solid #ffffff1f;background:#070a09cc;color:var(--text);font:15px Inter,sans-serif;letter-spacing:.3px;transition:border-color .2s,box-shadow .2s}
+.login-field input::placeholder{color:#6b7572}
+.login-field input:focus{outline:0;border-color:#d6938a;box-shadow:0 0 0 4px #d6938a26}
+.login-field:focus-within>svg{stroke:#d6938a}
+.login-eye{position:absolute;right:6px;width:34px;height:34px;display:grid;place-items:center;border:0;background:transparent;border-radius:8px;cursor:pointer}
+.login-eye svg{width:18px;height:18px;fill:none;stroke:#848e8b;stroke-width:1.8;transition:stroke .2s}.login-eye:hover svg,.login-eye.on svg{stroke:#ecebe8}
+.login-btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px;border:0;border-radius:11px;cursor:pointer;
+  background:linear-gradient(135deg,#e3a79e,#d6938a 45%,#c47f76);color:#1a1314;font:600 15px Inter,sans-serif;letter-spacing:.2px;box-shadow:0 10px 28px #d6938a40,inset 0 1px 0 #ffffff55;transition:transform .2s,box-shadow .2s}
+.login-btn:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,#ffffff66 50%,transparent 70%);transform:translateX(-120%);transition:transform .8s}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 14px 34px #d6938a59,inset 0 1px 0 #ffffff66}.login-btn:hover:before{transform:translateX(120%)}
+.login-btn:hover .lb-arrow{transform:translateX(3px)}.lb-arrow{transition:transform .2s}
+.lb-spin{display:none;width:16px;height:16px;border-radius:50%;border:2px solid #1a131455;border-top-color:#1a1314;animation:lg-spin .7s linear infinite}
+@keyframes lg-spin{to{transform:rotate(360deg)}}
+.login-btn.busy .lb-arrow{display:none}.login-btn.busy .lb-spin{display:inline-block}.login-btn:disabled{cursor:wait}
+.login-error{min-height:18px;margin-top:-4px;font-size:13px;color:#e8a49b;text-align:center}
+.login-foot{display:flex;align-items:center;justify-content:center;gap:8px;padding-top:12px;border-top:1px solid #ffffff10;font-size:12px;color:#848e8b}
+.login-foot i{width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 3px #34d39926}
+.card.shake{animation:shake .45s ease}@keyframes shake{0%,100%{transform:translate(0,-50%)}20%,60%{transform:translate(-8px,-50%)}40%,80%{transform:translate(8px,-50%)}}
+.skip{position:fixed;right:24px;bottom:22px;z-index:3;background:none;border:0;color:var(--faint);font:500 12px Inter;cursor:pointer;opacity:.8}
+.after{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:var(--bg);opacity:0;pointer-events:none;transition:opacity .8s;text-align:center}
+.after.on{opacity:1;pointer-events:auto}.after p{color:var(--muted)}.after button{margin-top:10px;background:none;border:1px solid #ffffff22;color:var(--text);padding:10px 16px;border-radius:10px;cursor:pointer;font:600 13px Inter}
+@media (max-width:760px){
+  .card{top:auto;bottom:16px;right:50%;transform:translate(50%,30px);padding:26px 22px 18px;gap:12px}.login-logo{width:150px}
+  .card.on{transform:translate(50%,0)}.card.out{transform:translate(50%,0) scale(.96)}
+  .card.shake{animation:shakeM .4s}@keyframes shakeM{0%,100%{transform:translate(50%,0)}20%,60%{transform:translate(calc(50% - 8px),0)}40%,80%{transform:translate(calc(50% + 8px),0)}}
+  .tag{display:none}.brand{top:22px;left:20px}.skip{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas><div class="vig"></div><div class="flash" id="flash"></div>
+<div class="tag" id="tag"><h1>Every email,<br><em>every</em> reply.</h1><p>Sent, opened, clicked, and the calls they bring in. Live from GHL and Calendly.</p></div>
+<form class="card" id="card" autocomplete="on">
+ <img class="login-logo li" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgNDAwIDIwMCI+PHJlY3QgeD0iMSIgeT0iMSIgd2lkdGg9IjM5OCIgaGVpZ2h0PSIxOTgiIHJ4PSIxOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkRGNkVDIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1kYXNoYXJyYXk9IjggOCIvPjx0ZXh0IHg9IjIwMCIgeT0iMTEyIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iR2VvcmdpYSxzZXJpZiIgZm9udC1zaXplPSIzNCIgZmlsbD0iI0ZERjZFQyI+Q2xpZW50IGxvZ288L3RleHQ+PC9zdmc+" alt="Example Client">
+ <div class="login-brand li"><span></span>EMAIL DASHBOARD<span></span></div>
+ <h2 class="li" id="greet">Welcome back</h2>
+ <p class="li">Enter the team password to view live email numbers, calls booked and revenue.</p>
+ <div class="login-field li"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+  <input type="password" id="pw" autocomplete="current-password" placeholder="Password" aria-label="Password">
+  <button type="button" class="login-eye" id="eye" aria-label="Show password"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div>
+ <button class="login-btn li" id="go" type="submit"><span class="lb-text">Open dashboard</span><span class="lb-arrow" aria-hidden="true">&rarr;</span><span class="lb-spin" aria-hidden="true"></span></button>
+ <div class="login-error" id="err" role="alert"></div>
+ <div class="login-foot li"><i></i>Private &middot; Example Client email team</div>
+</form>
+<button class="skip" id="skip">Skip intro</button>
+<div class="after" id="after"><div><h2>Dashboard opens here</h2><p>Design preview of the login. Type "wrong" to see a wrong password.</p><button id="again">Play again</button></div></div>
+<script>
+// Tunnel of thin rose, mint and cream light, drawn on a canvas (no 3D library).
+// 0-3 s: fly forward fast, slowing down. Then the login card slides in and the tunnel keeps drifting.
+// Right password: speed up into the glow and fade to the dashboard.
+const cv=document.getElementById('c'),cx=cv.getContext('2d'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W,H,DPR,F;
+function size(){DPR=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cx.setTransform(DPR,0,0,DPR,0,0);F=Math.min(W,H)*.62}
+size();addEventListener('resize',size);
+const COLS=[[214,147,138],[143,184,166],[244,219,208],[232,164,155]];
+const GAP=.42,FAR=20,rings=[],shards=[];
+let seed=11,count=0;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+// every third frame is the wide octagon cage, the others are square frames; each knows where its glints sit
+function ring(z){const k=count++%3,oct=k===0;return{z,oct,n:oct?8:4,rad:oct?1.75:1,col:COLS[Math.floor(rnd()*COLS.length)],w:oct?.9:.7+rnd()*.7,glint:Math.floor(rnd()*(oct?8:4)),gl:rnd()<.7,ph:rnd()*6.283}}
+for(let z=.4;z<FAR;z+=GAP)rings.push(ring(z));
+for(let i=0;i<90;i++)shards.push({a:rnd()*6.283,r:1.1+rnd()*1.6,z:rnd()*FAR,len:.15+rnd()*.5,th:.5+rnd()*1.5,col:COLS[Math.floor(rnd()*COLS.length)]});
+let cam=0,speed=0,t0=performance.now(),mode='intro',warp=0,lastT=t0;
+let mx=null,my=null,gx=0,gy=0,ox=0,oy=0;const sparks=[];
+addEventListener('pointermove',e=>{const first=mx===null;mx=e.clientX;my=e.clientY;if(first){gx=mx;gy=my}
+  if(!calm&&e.pointerType==='mouse')for(let i=0;i<2;i++)sparks.push({x:mx+(Math.random()-.5)*6,y:my+(Math.random()-.5)*6,vx:(Math.random()-.5)*.6,vy:(Math.random()-.5)*.6-.2,life:1,c:COLS[Math.floor(Math.random()*COLS.length)]})});
+addEventListener('pointerleave',()=>{mx=null});
+// the whole tunnel turns slowly and twists with depth, like a spiral of frames
+function vtx(r,i,tm,scale){const a=tm*.12+r.z*.085+i*6.283/r.n+(r.oct?0:Math.PI/4),rad=r.rad*(scale||1);return[Math.cos(a)*rad,Math.sin(a)*rad]}
+function proj(x,y,z){const d=z-cam;return d<=.05?null:[W/2+ox+(x-ox/F*.5)/d*F,H/2+oy+(y-oy/F*.5)/d*F,d]}
+function line(a,b,col,al,w){if(!a||!b)return;cx.strokeStyle=`rgba(${col},${al})`;cx.lineWidth=w;cx.beginPath();cx.moveTo(a[0],a[1]);cx.lineTo(b[0],b[1]);cx.stroke()}
+// a beam: a flat bar with a dim body and one bright edge, so it reads as 3D metal catching the light
+function beam(a,b,col,al,w){if(!a||!b)return;const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1,nx=-dy/L*w,ny=dx/L*w;
+  cx.fillStyle=`rgba(${col},${al*.3})`;cx.beginPath();cx.moveTo(a[0]-nx,a[1]-ny);cx.lineTo(b[0]-nx,b[1]-ny);cx.lineTo(b[0]+nx,b[1]+ny);cx.lineTo(a[0]+nx,a[1]+ny);cx.closePath();cx.fill();
+  line([a[0]+nx*.8,a[1]+ny*.8],[b[0]+nx*.8,b[1]+ny*.8],col,al,Math.max(.6,w*.35));line([a[0]-nx,a[1]-ny],[b[0]-nx,b[1]-ny],col,al*.35,Math.max(.4,w*.15))}
+function glint(p,col,al,sz){if(!p)return;const g=cx.createRadialGradient(p[0],p[1],0,p[0],p[1],sz);g.addColorStop(0,`rgba(255,246,240,${al})`);g.addColorStop(.3,`rgba(${col},${al*.6})`);g.addColorStop(1,`rgba(${col},0)`);cx.fillStyle=g;cx.fillRect(p[0]-sz,p[1]-sz,sz*2,sz*2)}
+function frame(now){
+  const dt=Math.min(.05,(now-lastT)/1000),t=(now-t0)/1000;lastT=now;
+  // speed: fast at the start, settling to a slow drift by ~3 s; warp on login
+  const target=mode==='warp'?2+warp*9:.28+5.2*Math.exp(-t/0.85);
+  speed+= (target-speed)*Math.min(1,dt*(mode==='warp'?2.5:6));if(mode==='warp')warp+=dt;
+  cam+=speed*dt;
+  // the far end of the tunnel leans toward the cursor
+  const tx=mx===null?0:(mx-W/2)*.14,ty=my===null?0:(my-H/2)*.14;ox+=(tx-ox)*Math.min(1,dt*2.2);oy+=(ty-oy)*Math.min(1,dt*2.2);
+  cx.globalCompositeOperation='source-over';cx.fillStyle='rgba(11,15,14,.5)';cx.fillRect(0,0,W,H);   // short trails
+  cx.globalCompositeOperation='lighter';cx.lineCap='round';
+  // center glow
+  const g=cx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.min(W,H)*.42),pul=.55+.15*Math.sin(t*1.6)+Math.min(.6,speed*.05);
+  g.addColorStop(0,`rgba(255,236,228,${.22*pul})`);g.addColorStop(.25,`rgba(214,147,138,${.13*pul})`);g.addColorStop(1,'rgba(214,147,138,0)');
+  cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  // frames: recycle the ones behind the camera to the far end, then draw far to near
+  rings.forEach(r=>{if(r.z-cam<.12){const z=r.z+FAR;Object.assign(r,ring(z))}});
+  rings.sort((a,b)=>b.z-a.z);
+  const nextOf=(k,oct)=>{for(let j=k-1;j>=0;j--)if(rings[j].oct===oct)return rings[j];return null};   // the next frame of the same kind, further away
+  for(let k=rings.length-1;k>=0;k--){
+    const r=rings[k],d=r.z-cam,fade=Math.min(1,(FAR-d)/(FAR*.7))*Math.min(1,d/.9),al=.62*fade*fade,col=r.col.join(',');
+    if(al<.01)continue;
+    const P=[];for(let i=0;i<r.n;i++){const v=vtx(r,i,t);P.push(proj(v[0],v[1],r.z))}
+    const w=Math.max(.6,r.w*8.5/d);
+    for(let i=0;i<r.n;i++)beam(P[i],P[(i+1)%r.n],col,al,w);
+    if(!r.oct){                                                    // a thinner square inside, turned 45 degrees
+      const Q=[];for(let i=0;i<4;i++){const v=vtx(r,i+.5,t,.62);Q.push(proj(v[0],v[1],r.z))}
+      for(let i=0;i<4;i++)line(Q[i],Q[(i+1)%4],col,al*.55,Math.max(.4,w*.25));
+    }
+    const nx=nextOf(k,r.oct);
+    if(nx){for(let i=0;i<r.n;i++){const v=vtx(nx,i,t),q=proj(v[0],v[1],nx.z);line(P[i],q,col,al*.45,Math.max(.4,w*.22));   // rails
+      if(i%2===0){const v2=vtx(nx,i+1,t),q2=proj(v2[0],v2[1],nx.z);line(P[i],q2,col,al*.3,Math.max(.3,w*.15))}}}           // braces
+    if(r.gl)glint(P[r.glint],col,al*(.55+.45*Math.sin(t*3+r.ph)),Math.max(6,w*4.5));
+  }
+  // loose bars flying past
+  shards.forEach(s=>{if(s.z-cam<.1)s.z+=FAR;const x=Math.cos(s.a)*s.r,y=Math.sin(s.a)*s.r,d=s.z-cam,al=Math.min(1,(FAR-d)/FAR)*.6*Math.min(1,d/.6);
+    const a=proj(x,y,s.z),b=proj(x,y,s.z+s.len*(1+speed*.5));beam(a,b,s.col.join(','),al,Math.max(.5,s.th*2.4/d))});
+  // cursor light and sparkle trail
+  if(mx!==null&&!calm){gx+=(mx-gx)*Math.min(1,dt*9);gy+=(my-gy)*Math.min(1,dt*9);
+    const cg=cx.createRadialGradient(gx,gy,0,gx,gy,140);cg.addColorStop(0,'rgba(255,226,216,.16)');cg.addColorStop(.35,'rgba(214,147,138,.08)');cg.addColorStop(1,'rgba(214,147,138,0)');
+    cx.fillStyle=cg;cx.fillRect(gx-140,gy-140,280,280)}
+  for(let i=sparks.length-1;i>=0;i--){const p=sparks[i];p.x+=p.vx;p.y+=p.vy;p.life-=dt*1.6;if(p.life<=0){sparks.splice(i,1);continue}
+    cx.fillStyle=`rgba(${p.c.join(',')},${p.life*.9})`;cx.beginPath();cx.arc(p.x,p.y,1.6*p.life+.4,0,6.283);cx.fill()}
+  if(sparks.length>160)sparks.splice(0,sparks.length-160);
+  requestAnimationFrame(frame);
+}
+const $=id=>document.getElementById(id),card=$('card'),pw=$('pw');
+function greet(){const h=new Date().getHours();$('greet').textContent=h>=5&&h<12?'Good morning, team':h>=12&&h<18?'Good afternoon, team':'Good evening, team'}
+$('eye').onclick=()=>{const on=pw.type==='password';pw.type=on?'text':'password';$('eye').classList.toggle('on',on);$('eye').setAttribute('aria-label',on?'Hide password':'Show password');pw.focus()};
+function showLogin(){if(card.classList.contains('on'))return;greet();$('tag').classList.add('on');card.classList.add('on');$('skip').style.display='none';setTimeout(()=>pw.focus({preventScroll:true}),400)}
+function start(){t0=performance.now();lastT=t0;cam=0;speed=0;mode='intro';warp=0;
+  ['tag','card','flash','after'].forEach(id=>$(id).classList.remove('on','out'));$('skip').style.display='';pw.value='';$('err').textContent='';
+  setTimeout(showLogin,calm?0:2700)}
+$('skip').onclick=showLogin;
+card.addEventListener('submit',e=>{
+  e.preventDefault();if(!pw.value)return;$('go').classList.add('busy');$('go').disabled=true;$('err').textContent='';
+  setTimeout(()=>{                               // the real page asks the server here
+    $('go').classList.remove('busy');$('go').disabled=false;
+    if(pw.value.toLowerCase()==='wrong'){card.classList.remove('shake');void card.offsetWidth;card.classList.add('shake');$('err').textContent='Wrong password';pw.select();return}
+    card.classList.add('out');$('tag').classList.remove('on');mode='warp';
+    setTimeout(()=>$('flash').classList.add('on'),calm?0:900);
+    setTimeout(()=>$('after').classList.add('on'),calm?0:1500);
+  },350);
+});
+$('again').onclick=start;
+if(calm){size();requestAnimationFrame(frame)}else requestAnimationFrame(frame);
+start();
+</script>
+</body>
+</html>

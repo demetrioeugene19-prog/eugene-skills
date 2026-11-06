@@ -1,6 +1,6 @@
 # Eugene Skills
 
-My Claude Code skill library. 64 skills plus slash commands, moved between machines with this repo.
+My Claude Code skill library. 65 skills plus slash commands, moved between machines with this repo.
 
 A skill is a folder of instructions Claude loads when a task matches it. Nothing to run, nothing to install beyond putting the folders in the right place.
 
@@ -55,6 +55,7 @@ This is the part that does the visible work. Two of these are entry points, use 
 | `ui-gohighlevel-designer` | Scoped, paste-ready HTML, CSS and JS for GoHighLevel funnels and pages. Mobile first, styles namespaced to a root id so a block can never leak into another section. |
 | `eugene-premium-web` | My own build playbook: proven design systems, the conversion build order, hard rules (no em dashes, verify at 375px, the sticky-header bug), forms, and the GHL and Vercel deploy flow. |
 | `gohighlevel` | GoHighLevel platform operations. |
+| `client-dashboard-builder` | **"make a dashboard like the client's"**: a live client dashboard as a Google Apps Script web app (password login, cached numbers, background triggers) fed by GHL emails and contacts, Calendly, Slack and Google Sheets, with an animated login. Includes a complete working email dashboard with every client value as a placeholder (`<GHL_LOCATION_ID>`, `<CALENDLY_ORG_ID>`, `<SALES_SHEET_ID>`, team names, subject lines). |
 
 ### Craft
 
